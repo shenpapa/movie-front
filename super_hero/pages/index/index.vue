@@ -3,7 +3,7 @@
 		<swiper :indicator-dots="true" :autoplay="true" :interval="3000" circular :duration="1000" class="swiper">
 			<swiper-item v-for="item in swipers" :key="item.index" >
 				<view class="swiper-item">
-					<image :src="`/statics/${item.index}`" mode=""></image>
+					<image :src="`${$address}/${item.index}`" mode=""></image>
 				</view>
 			</swiper-item>
 		</swiper>
@@ -17,7 +17,7 @@
 			<scroll-view scroll-x="true" class="hot-movie-scroll">
 				<view class="hot-wraper">
 					<view class="hot-movie-item" v-for="(mv, index) in hotMovies">
-						<image :src="`/statics/${mv.index}`" mode="" class="movie-pic"></image>
+						<image :src="`${$address}/${mv.index}`" mode="" class="movie-pic"></image>
 						<view class="movie-name">
 							{{ mv.name }}
 						</view>
@@ -46,8 +46,8 @@
 				<view class="pre-wraper">
 					<view class="pre-movie-item"  v-for="pre in preMovies">
 						<video
-						 :src="`/statics/${pre.index}`"
-						 :poster="`/statics/${pre.cover}`" 
+						 :src="`${$address}/${pre.index}`"
+						 :poster="`${$address}/${pre.cover}`" 
 						 controls
 						 class="pre-video"
 						 ></video>
@@ -63,7 +63,7 @@
 				</view>
 			</view>
 			<view class="like-item" v-for="like in uLikes">
-				<image :src="`/statics/${like.index}`" @click="praise" class="u-like-pic"></image>
+				<image :src="`${$address}/${like.index}`" @click="praise" class="u-like-pic"></image>
 				<view class="like-desc">
 					{{ like.desc }}
 					<br/>
@@ -86,14 +86,17 @@
 				swipers: [],
 				hotMovies: [],
 				preMovies: [],
-				uLikes: []
+				uLikes: [],
+				$address: 'http://localhost:3000'
 			}
 		},
 		onLoad() {
-			const swipers = uni.request({ url:  '/api/statics?type=carousel' })
-			const poster = uni.request({ url:  '/api/statics?type=poster' })
-			const pre = uni.request({ url:  '/api/statics?type=pre' })
-			const like = uni.request({ url:  '/api/statics?type=like' })
+			const $address = this.$address
+			const statics = `${$address}/api/statics?type=`
+			const swipers = uni.request({ url:  `${statics}carousel` })
+			const poster = uni.request({ url:  `${statics}poster` })
+			const pre = uni.request({ url:  `${statics}pre` })
+			const like = uni.request({ url:  `${statics}like` })
 			Promise.all([swipers, poster, pre, like]).then(([s_res, p_res, pre_res, like_res]) => {
 				if (s_res[1].statusCode === 200) {
 					this.swipers = s_res[1].data
