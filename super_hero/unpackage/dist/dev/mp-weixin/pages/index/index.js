@@ -246,14 +246,17 @@ var _default =
       swipers: [],
       hotMovies: [],
       preMovies: [],
-      uLikes: [] };
+      uLikes: [],
+      $address: 'http://localhost:3000' };
 
   },
   onLoad: function onLoad() {var _this = this;
-    var swipers = uni.request({ url: '/api/statics?type=carousel' });
-    var poster = uni.request({ url: '/api/statics?type=poster' });
-    var pre = uni.request({ url: '/api/statics?type=pre' });
-    var like = uni.request({ url: '/api/statics?type=like' });
+    var $address = this.$address;
+    var statics = "".concat($address, "/api/statics?type=");
+    var swipers = uni.request({ url: "".concat(statics, "carousel") });
+    var poster = uni.request({ url: "".concat(statics, "poster") });
+    var pre = uni.request({ url: "".concat(statics, "pre") });
+    var like = uni.request({ url: "".concat(statics, "like") });
     Promise.all([swipers, poster, pre, like]).then(function (_ref) {var _ref2 = _slicedToArray(_ref, 4),s_res = _ref2[0],p_res = _ref2[1],pre_res = _ref2[2],like_res = _ref2[3];
       if (s_res[1].statusCode === 200) {
         _this.swipers = s_res[1].data;
