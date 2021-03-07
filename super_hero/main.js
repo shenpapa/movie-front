@@ -1,11 +1,15 @@
 import Vue from 'vue'
 import App from './App'
 
+// 引入vuex
+import store from 'store/index.js'
+Vue.prototype.$store = store
+
 Vue.config.productionTip = false
 
 App.mpType = 'app'
-Vue.prototype.$address = 'http://localhost:3000'
 const app = new Vue({
-    ...App
+    ...App,
+	store
 })
 app.$mount()

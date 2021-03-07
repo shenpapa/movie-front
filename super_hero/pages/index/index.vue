@@ -80,14 +80,15 @@
 </template>
 
 <script>
+	import { mapState } from 'vuex'
 	export default {
 		data() {
+			const _this = this
 			return {
 				swipers: [],
-				hotMovies: [],
 				preMovies: [],
 				uLikes: [],
-				$address: 'http://localhost:3000'
+				// $address: _this.$address
 			}
 		},
 		onLoad() {
@@ -108,10 +109,12 @@
 					this.preMovies = pre_res[1].data
 				}
 				if (like_res[1].statusCode === 200) {
-					console.log(like_res, 'like')
 					this.uLikes = like_res[1].data
 				}
 			})
+		},
+		computed: {
+			...mapState(['$address'])
 		},
 		methods: {
 			praise() {
