@@ -25,7 +25,7 @@
 							<uni-rate
 							 max="5"
 							 :value="mv.score / 2"
-							 size="14"
+							 size="12"
 							 readonly="true"
 							 class="score-star"
 							/>
@@ -42,18 +42,17 @@
 					超英预告
 				</view>
 			</view>
-			<scroll-view scroll-x="true">
-				<view class="pre-wraper">
-					<view class="pre-movie-item"  v-for="pre in preMovies">
-						<video
-						 :src="`${$address}/${pre.index}`"
-						 :poster="`${$address}/${pre.cover}`" 
-						 controls
-						 class="pre-video"
-						 ></video>
-					</view>
+			<view class="pre_wraper">
+				<view class="pre-movie-item"  v-for="pre in preMovies">
+					<video
+					 :src="`${$address}/${pre.index}`"
+					 :poster="`${$address}/${pre.cover}`" 
+					 controls
+					 class="pre-video"
+					 ></video>
 				</view>
-			</scroll-view>
+			</view>
+	
 		</view>
 		<view class="guess-u-like">
 			<view class="title">
@@ -62,17 +61,17 @@
 					猜你喜欢
 				</view>
 			</view>
-			<view class="like-item" v-for="like in uLikes">
-				<image :src="`${$address}/${like.index}`" @click="praise" class="u-like-pic"></image>
+			<view class="like-item" v-for="(like, index) in uLikes">
+				<image :src="`${$address}/${like.index}`" class="u-like-pic"></image>
 				<view class="like-desc">
 					{{ like.desc }}
 					<br/>
 					{{ like.time }}
 				</view>
-				<view class="like-praise">
+				<view class="like-praise" @click="praise(index)">
 					<image src="../../static/icos/praise.png" class="like-praise-icon"></image>
 					<text class="like-praise-text">点赞</text>
-					<text class="plus-one">+1</text>
+					<view class="plus-one plus-one-hide" :animation="praiseAnimation[index]" >+1</view>
 				</view>
 			</view>
 		</view>
@@ -88,10 +87,13 @@
 				swipers: [],
 				preMovies: [],
 				uLikes: [],
-				// $address: _this.$address
+				hotMovies: [],
+				praiseAnimation: [],
+				ani: null,
 			}
 		},
 		onLoad() {
+			this.ani = uni.createAnimation()
 			const $address = this.$address
 			const statics = `${$address}/api/statics?type=`
 			const swipers = uni.request({ url:  `${statics}carousel` })
@@ -110,6 +112,7 @@
 				}
 				if (like_res[1].statusCode === 200) {
 					this.uLikes = like_res[1].data
+					this.praiseAnimation = new Array(this.uLikes.length).fill({})
 				}
 			})
 		},
@@ -117,8 +120,11 @@
 			...mapState(['$address'])
 		},
 		methods: {
-			praise() {
-				
+			praise(index) {
+				this.praiseAnimation.splice(index, 1, this.ani.opacity(1).translateY(-80).scale(1.5).step({duration: 200}).export())
+				setTimeout(() => {
+					this.praiseAnimation.splice(index, 1, this.ani.opacity(0).translateY(0).scale(0).step({duration: 0}).export()) 
+				}, 200)
 			}
 		}
 	}
@@ -191,17 +197,18 @@
 		.pre-notice {
 			margin-top: 20upx;
 			padding: 0 20upx;
-			.pre-wraper {
+			.pre_wraper {
 				display: flex;
-				justify-content: flex-start;
-				white-space: nowrap;
-				width: 100%;
-				margin-top: 12upx;	
+				flex-wrap: wrap;
 				.pre-movie-item {
-					margin-right: 20upx;
+					width: 50%;
+					display: flex;
+					justify-content: flex-start;
+					overflow: hidden;
+					margin-top: 12upx;
 					.pre-video {
-						width: 384upx;
-						height: 216upx;
+						width: 355upx;
+						height: 220upx;
 					}
 				}
 			}
@@ -247,6 +254,9 @@
 				}
 				.plus-one {
 					align-self: center;
+				}
+				.plus-one-hide{
+					opacity: 0;
 				}
 			}
 		}
